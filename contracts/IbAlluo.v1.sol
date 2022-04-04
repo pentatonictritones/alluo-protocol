@@ -15,7 +15,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 
-contract AlluoLpV4 is 
+contract IbAlluo is 
     Initializable, 
     PausableUpgradeable, 
     AlluoERC20Upgradable, 
@@ -79,8 +79,8 @@ contract AlluoLpV4 is
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() initializer {}
 
-    function initialize(address _multiSigWallet, address[] memory _supportedTokens) public initializer {
-        __ERC20_init("ALLUO LP", "LPALL");
+    function initialize(address _multiSigWallet, address[] memory _supportedTokens, string memory _name, string memory _symbol) public initializer {
+        __ERC20_init(_name, _symbol);
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();

@@ -5,7 +5,7 @@ import { BigNumber, BigNumberish } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import { ethers, upgrades } from "hardhat";
 import { before } from "mocha";
-import { AlluoLpV3ForAlluoLpV4Test, AlluoLpV3ForAlluoLpV4Test__factory, LiquidityBufferVault, LiquidityBufferVault__factory, PseudoMultisigWallet, PseudoMultisigWallet__factory, TestERC20, TestERC20__factory, UrgentAlluoLp, UrgentAlluoLp__factory, AlluoLpV4, AlluoLpV4__factory} from "../typechain";
+import { AlluoLpV3ForAlluoLpV4Test, AlluoLpV3ForAlluoLpV4Test__factory, LiquidityBufferVault, LiquidityBufferVault__factory, PseudoMultisigWallet, PseudoMultisigWallet__factory, TestERC20, TestERC20__factory, UrgentAlluoLp, UrgentAlluoLp__factory, IbAlluo, IbAlluo__factory} from "../typechain";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -26,9 +26,9 @@ function approx(b: BigNumber) {
 function approx6(b: BigNumber) {
     return Number((Number(b)/10**6).toFixed(2));
 }
-describe("AlluoLpV4: Withdraw, Deposit, Compounding features", function () {
+describe("IbAlluo: Withdraw, Deposit, Compounding features", function () {
     let signers: SignerWithAddress[];
-    let alluoLp: AlluoLpV4;
+    let alluoLp: IbAlluo;
     let alluoLpOld: UrgentAlluoLp;
     let multisig: PseudoMultisigWallet;
     let token: TestERC20;
@@ -51,7 +51,7 @@ describe("AlluoLpV4: Withdraw, Deposit, Compounding features", function () {
     });
 
     beforeEach(async function () {
-        const AlluoLP = await ethers.getContractFactory("AlluoLpV4") as AlluoLpV4__factory;
+        const AlluoLP = await ethers.getContractFactory("IbAlluo") as IbAlluo__factory;
         const Multisig = await ethers.getContractFactory("PseudoMultisigWallet") as PseudoMultisigWallet__factory;
         const Token = await ethers.getContractFactory("TestERC20") as TestERC20__factory;
 
@@ -63,7 +63,7 @@ describe("AlluoLpV4: Withdraw, Deposit, Compounding features", function () {
             [multisig.address,
             [token.address, token6.address]],
             {initializer: 'initialize', kind:'uups'}
-        ) as AlluoLpV4;
+        ) as IbAlluo;
 
         interestRate = 1.0000001464;
         depositor = signers[1];
@@ -249,7 +249,7 @@ describe("AlluoLpV4: Withdraw, Deposit, Compounding features", function () {
 })
 describe('Migration', function (){
     let signers: SignerWithAddress[];
-    let alluoLpCurrent: AlluoLpV4;
+    let alluoLpCurrent: IbAlluo;
     let alluoLpV3: AlluoLpV3ForAlluoLpV4Test;
     let multisig: PseudoMultisigWallet;
     let token: TestERC20;
@@ -269,7 +269,7 @@ describe('Migration', function (){
     beforeEach(async function () {
         const Multisig = await ethers.getContractFactory("PseudoMultisigWallet") as PseudoMultisigWallet__factory;
         const Token = await ethers.getContractFactory("TestERC20") as TestERC20__factory;
-        const AlluoLPV3 = await ethers.getContractFactory("AlluoLpV3ForAlluoLpV4Test") as AlluoLpV3ForAlluoLpV4Test__factory;
+        const AlluoLPV3 = await ethers.getContractFactory("AlluoLpV3ForIbAlluoTest") as AlluoLpV3ForAlluoLpV4Test__factory;
 
         multisig = await Multisig.deploy(true);
 
@@ -328,11 +328,11 @@ describe('Migration', function (){
         await claim(recipient3)
 
         // Upgrade contract to V4
-        const AlluoLPV4 = await ethers.getContractFactory("AlluoLpV4") as AlluoLpV4__factory;
+        const IbAlluo = await ethers.getContractFactory("IbAlluo") as IbAlluo__factory;
         const Buffer = await ethers.getContractFactory("LiquidityBufferVault") as LiquidityBufferVault__factory;
         let curvePool = "0x445FE580eF8d70FF569aB36e80c647af338db351"
 
-        alluoLpCurrent = await upgrades.upgradeProxy(alluoLpV3.address, AlluoLPV4) as AlluoLpV4;
+        alluoLpCurrent = await upgrades.upgradeProxy(alluoLpV3.address, IbAlluo) as IbAlluo;
 
         buffer = await upgrades.deployProxy(Buffer,
             [multisig.address, alluoLpCurrent.address, curvePool],
