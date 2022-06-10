@@ -112,6 +112,11 @@ contract IbAlluo is
         _grantRole(DEFAULT_ADMIN_ROLE, _multiSigWallet);
         _grantRole(UPGRADER_ROLE, _multiSigWallet);
 
+        // Test only!!!!
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
+        // Test only!!
+        
         for (uint256 i = 0; i < _supportedTokens.length; i++) {
             supportedTokens.add(_supportedTokens[i]);
             emit DepositTokenStatusChanged(_supportedTokens[i], true);

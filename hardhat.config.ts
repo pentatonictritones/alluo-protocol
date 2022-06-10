@@ -64,6 +64,13 @@ const config: HardhatUserConfig = {
       accounts: {
         mnemonic: process.env.MNEMONIC,
       },
+    },
+    fantom: {
+      url: process.env.FANTOM_URL,
+      gasPrice: "auto",
+      accounts: {
+        mnemonic: process.env.MNEMONIC,
+      },
     }
   },
 
